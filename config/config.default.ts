@@ -1,7 +1,25 @@
 import { EggAppConfig, EggAppInfo, PowerPartial } from 'egg';
 
 export default (appInfo: EggAppInfo) => {
-  const config = {} as PowerPartial<EggAppConfig>;
+  const config = {
+    neo4j: {
+      url: "bolt://localhost",
+      username: "neo4j",
+      password: "chinavis"
+    },
+    security : {
+      // 关闭 csrf
+      csrf: {
+        enable: false,
+      },
+       // 跨域白名单
+      domainWhiteList: [ 'http://localhost:3000' ],
+    },
+    cors : {
+      origin: '*',
+      allowMethods: 'GET, PUT, POST, DELETE, PATCH'
+    }
+  } as PowerPartial<EggAppConfig>;
 
   // override config from framework / plugin
   // use for cookie sign key, should change to your own and keep security
