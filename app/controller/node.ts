@@ -10,6 +10,6 @@ export default class NodeController extends Controller {
     const params = ctx.request.body;
     const res = await ctx.service.node.getNode(params);
     ctx.body = res;
-    ctx.type = "json";
+    ctx.type = 'json';
   }
 }

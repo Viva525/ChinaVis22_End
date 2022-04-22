@@ -3,9 +3,9 @@ import { EggAppConfig, EggAppInfo, PowerPartial } from 'egg';
 export default (appInfo: EggAppInfo) => {
   const config = {
     neo4j: {
-      url: "bolt://localhost",
-      username: "neo4j",
-      password: "chinavis"
+      url: 'bolt://localhost',
+      username: 'neo4j',
+      password: 'chinavis'
     },
     security : {
       // 关闭 csrf
