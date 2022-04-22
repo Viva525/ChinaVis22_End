@@ -8,7 +8,7 @@ export default class NodeController extends Controller {
   public async getNodeById() {
     const { ctx } = this;
     const params = ctx.request.body;
-    let res = await ctx.service.node.getNode(params);
+    const res = await ctx.service.node.getNode(params);
     ctx.body = res;
     ctx.type = "json";
   }
