@@ -10,11 +10,17 @@ if not os.path.exists("splitEdge"):
 df = pd.read_csv('./data/Link.csv')
 
 for key, group in tqdm(df.groupby("relation")):
+
     # group = group.drop(columns='relation')
     group.reset_index(drop=True, inplace=True)
     group.rename(columns={"relation": ":TYPE",
                           "source": ":START_ID",
                           "target": ":END_ID"},  inplace=True)
+
+    if key in ["r_cert", "r_subdomain", "r_request_jump", "r_dns_a"]:
+        group.insert(group.shape[1], "weight:int", 2)
+    elif key in ["r_cert_chain", "r_cname"]:
+        group.insert(group.shape[1], "weight:int", 1)
     group.to_csv(
         './splitEdge/' + key + '.csv', index=False, encoding='utf_8_sig')
 
@@ -24,7 +30,7 @@ split node
 # get work Path
 path = os.getcwd()
 # read csv file
-dataFrame = pd.read_csv(path+"\\data\\Node.csv")
+dataFrame = pd.read_csv(path+"\\data\\CommunityNode.csv")
 # group
 groups = dataFrame.groupby("type")
 

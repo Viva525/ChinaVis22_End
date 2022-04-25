@@ -12,6 +12,10 @@ logs/
 *.js
 !.autod.conf.js
 
+/data
+/processedData
+/splitEdge
+/splitNode
 
 app/**/*.js
 test/**/*.js

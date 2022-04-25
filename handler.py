@@ -36,8 +36,10 @@ if not os.path.exists(saveEdgePath):
 
 
 def apply_split(row):
-    for s in re.findall('[A-Z]', row['industry']):
+    res = re.findall('[A-Z]', row['industry'])
+    for s in res:
         row[dict_map[s]] = True
+    row["weight"] = len(res)
     return row
 
 
@@ -57,8 +59,9 @@ df = pd.merge(df, df_whois_Email, left_on='id',
               right_on=':START_ID', how='left')
 df = pd.merge(df, df_Email, left_on=':END_ID', right_on='id', how='left')
 
-df = df.drop(columns=[":TYPE", ":START_ID", ":END_ID", "type_y", "id_y"])
+df = df.drop(columns=[":TYPE", ":START_ID", ":END_ID", "type_y"])
 df.rename(columns={"id_x": "id",
+                   "id_y": "email_id",
                    "name_x": "name",
                    "type_x": "type",
                    "name_y": "email"},  inplace=True)
@@ -73,8 +76,9 @@ df = pd.merge(df, df_whois_Name, left_on='id',
               right_on=':START_ID', how='left')
 df = pd.merge(df, df_Name, left_on=':END_ID', right_on='id', how='left')
 
-df = df.drop(columns=[":TYPE", ":START_ID", ":END_ID", "type_y", "id_y"])
+df = df.drop(columns=[":TYPE", ":START_ID", ":END_ID", "type_y"])
 df.rename(columns={"id_x": "id",
+                   "id_y": "register_id",
                    "name_x": "name",
                    "type_x": "type",
                    "name_y": "register"},  inplace=True)
@@ -90,8 +94,9 @@ df = pd.merge(df, df_whois_Phone, left_on='id',
               right_on=':START_ID', how='left')
 df = pd.merge(df, df_Phone, left_on=':END_ID', right_on='id', how='left')
 
-df = df.drop(columns=[":TYPE", ":START_ID", ":END_ID", "type_y", "id_y"])
+df = df.drop(columns=[":TYPE", ":START_ID", ":END_ID", "type_y"])
 df.rename(columns={"id_x": "id:ID",
+                   "id_y": "phone_id",
                    "name_x": "name",
                    "type_x": ":LABEL",
                    "name_y": "phone"},  inplace=True)
@@ -107,8 +112,11 @@ print(df.columns)
 for insert_c in list(dict_map.values()):
     df.insert(df.shape[1], insert_c, False)
 
+df.insert(df.shape[1], "weight", 0)
+
 df = df.progress_apply(apply_split, axis=1)
 df = df.drop(columns="industry")
+df["community"] = df["community"].astype(int)
 df.to_csv(saveNodePath + 'Domain.csv', index=False, encoding="utf-8-sig")
 
 '''
@@ -125,8 +133,9 @@ df = pd.merge(df, df_r_asn, left_on='id', right_on=':START_ID', how='left')
 df = pd.merge(df, df_ASN, left_on=':END_ID', right_on='id', how='left')
 
 
-df = df.drop(columns=[":TYPE", ":START_ID", ":END_ID", "type_y", "id_y"])
+df = df.drop(columns=[":TYPE", ":START_ID", ":END_ID", "type_y"])
 df.rename(columns={"id_x": "id",
+                   "id_y": "asn_id",
                    "name_x": "name",
                    "type_x": "type",
                    "name_y": "asn"},  inplace=True)
@@ -141,13 +150,14 @@ df = pd.merge(df, df_cidr, left_on='id', right_on=':START_ID', how='left')
 df = pd.merge(df, df_IPC, left_on=':END_ID', right_on='id', how='left')
 
 
-df = df.drop(columns=[":TYPE", ":START_ID", ":END_ID", "type_y", "id_y"])
+df = df.drop(columns=[":TYPE", ":START_ID", ":END_ID", "type_y"])
 df.rename(columns={"id_x": "id:ID",
+                   "id_y": "ipc_id",
                    "name_x": "name",
                    "type_x": ":LABEL",
                    "name_y": "ipc"},  inplace=True)
 print(df.columns)
-
+df["community"] = df["community"].astype(int)
 df.to_csv(saveNodePath + 'IP.csv', index=False, encoding="utf-8-sig")
 
 '''
@@ -157,6 +167,7 @@ df_cert = pd.read_csv(nodepath + 'Cert.csv')
 df_cert.rename(columns={"id": "id:ID",
                         "type": ":LABEL"},  inplace=True)
 print(df_cert.columns)
+df["community"] = df["community"].astype(int)
 df_cert.to_csv(saveNodePath + 'Cert.csv',
                index=False, encoding="utf-8-sig")
 
