@@ -64,7 +64,8 @@ df.rename(columns={"id_x": "id",
                    "id_y": "email_id",
                    "name_x": "name",
                    "type_x": "type",
-                   "name_y": "email"},  inplace=True)
+                   "name_y": "email",
+                   "community": "community:int"},  inplace=True)
 print(df.columns)
 
 # merge domain & name
@@ -112,11 +113,11 @@ print(df.columns)
 for insert_c in list(dict_map.values()):
     df.insert(df.shape[1], insert_c, False)
 
-df.insert(df.shape[1], "weight", 0)
+df.insert(df.shape[1], "weight:int", 0)
 
 df = df.progress_apply(apply_split, axis=1)
 df = df.drop(columns="industry")
-df["community"] = df["community"].astype(int)
+df["community:int"] = df["community:int"].astype(int)
 df.to_csv(saveNodePath + 'Domain.csv', index=False, encoding="utf-8-sig")
 
 '''
@@ -138,7 +139,8 @@ df.rename(columns={"id_x": "id",
                    "id_y": "asn_id",
                    "name_x": "name",
                    "type_x": "type",
-                   "name_y": "asn"},  inplace=True)
+                   "name_y": "asn",
+                   "community": "community:int"},  inplace=True)
 print(df.columns)
 
 # merge IP & IPC
@@ -157,7 +159,7 @@ df.rename(columns={"id_x": "id:ID",
                    "type_x": ":LABEL",
                    "name_y": "ipc"},  inplace=True)
 print(df.columns)
-df["community"] = df["community"].astype(int)
+df["community:int"] = df["community:int"].astype(int)
 df.to_csv(saveNodePath + 'IP.csv', index=False, encoding="utf-8-sig")
 
 '''
@@ -165,9 +167,10 @@ Rename Cert
 '''
 df_cert = pd.read_csv(nodepath + 'Cert.csv')
 df_cert.rename(columns={"id": "id:ID",
-                        "type": ":LABEL"},  inplace=True)
+                        "type": ":LABEL",
+                        "community": "community:int"},  inplace=True)
 print(df_cert.columns)
-df["community"] = df["community"].astype(int)
+df["community:int"] = df["community:int"].astype(int)
 df_cert.to_csv(saveNodePath + 'Cert.csv',
                index=False, encoding="utf-8-sig")
 

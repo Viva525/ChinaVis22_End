@@ -22,13 +22,13 @@ with open('modify.csv','a+', encoding='utf-8-sig',newline='') as f:#r为标识�
             node.loc[node["community"] == c_end, ["community"]] = c_start
         
 
-    subdomain = pd.read_csv(
-        './processedData/Edge/domain-subdomain.csv').drop(columns=[":TYPE", "weight:int"])
-    for i, row in tqdm(subdomain.iterrows()):
-        s_start = node[node["id"] == row[":START_ID"]]["community"].values[0]
-        s_end = node[node["id"] == row[":END_ID"]]["community"].values[0]
-        if(s_start != s_end):
-            writer.writerow([c_end, c_start])
-            node.loc[node["community"] == s_end, ["community"]] = s_start
+    # subdomain = pd.read_csv(
+    #     './processedData/Edge/domain-subdomain.csv').drop(columns=[":TYPE", "weight:int"])
+    # for i, row in tqdm(subdomain.iterrows()):
+    #     s_start = node[node["id"] == row[":START_ID"]]["community"].values[0]
+    #     s_end = node[node["id"] == row[":END_ID"]]["community"].values[0]
+    #     if(s_start != s_end):
+    #         writer.writerow([c_end, c_start])
+    #         node.loc[node["community"] == s_end, ["community"]] = s_start
         
     node.to_csv('CommunityNode.csv', index=False, encoding="utf-8-sig")
