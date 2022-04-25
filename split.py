@@ -55,23 +55,27 @@ ASN = ASN_gp.drop("industry", axis=1).set_index("id")
 
 if not os.path.exists("splitNode"):
     os.mkdir("splitNode")
-
 Domain.to_csv(path+"\\splitNode\\Domain.csv", encoding='utf_8_sig')
 print("Domain finished")
 IP.to_csv(path+"\\splitNode\\IP.csv", encoding='utf_8_sig')
 print("IP finished")
 Cert.to_csv(path+"\\splitNode\\Cert.csv", encoding='utf_8_sig')
 print("Domain finished")
+Register_Name.drop(columns=["community"])
 Register_Name.to_csv(path+"\\splitNode\\Register_Name.csv",
                      encoding='utf_8_sig')
 print("Register_Name finished")
+Register_Email.drop(columns=["community"])
 Register_Email.to_csv(
     path+"\\splitNode\\Register_Email.csv", encoding='utf_8_sig')
 print("Register_Email finished")
+Register_Phone.drop(columns=["community"])
 Register_Phone.to_csv(
     path+"\\splitNode\\Register_Phone.csv", encoding='utf_8_sig')
 print("Register_Phone finished")
+IPC.drop(columns=["community"])
 IPC.to_csv(path+"\\splitNode\\IPC.csv", encoding='utf_8_sig')
 print("IPC finished")
+ASN.drop(columns=["community"])
 ASN.to_csv(path+"\\splitNode\\ASN.csv", encoding='utf_8_sig')
 print("ASN finished")
