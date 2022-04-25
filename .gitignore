@@ -12,14 +12,12 @@ logs/
 *.js
 !.autod.conf.js
 
-<<<<<<< HEAD
 /data
 /processedData
 /splitEdge
 /splitNode
+/modify.csv
 
-=======
->>>>>>> 8153dc11f49d4d5a2e3d37905de8d265d8321f2c
 app/**/*.js
 test/**/*.js
 config/**/*.js
