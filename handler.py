@@ -115,6 +115,7 @@ for insert_c in list(dict_map.values()):
 
 df.insert(df.shape[1], "weight:int", 0)
 
+# df.apply的tqdm写法，用来显示进度条
 df = df.progress_apply(apply_split, axis=1)
 df = df.drop(columns="industry")
 df["community:int"] = df["community:int"].astype(int)
