@@ -39,7 +39,7 @@ def apply_split(row):
     res = re.findall('[A-Z]', row['industry'])
     for s in res:
         row[dict_map[s]] = True
-    row["weight"] = len(res)
+    row["weight:int"] = len(res)
     return row
 
 
@@ -170,7 +170,7 @@ df_cert.rename(columns={"id": "id:ID",
                         "type": ":LABEL",
                         "community": "community:int"},  inplace=True)
 print(df_cert.columns)
-df["community:int"] = df["community:int"].astype(int)
+df_cert["community:int"] = df_cert["community:int"].astype(int)
 df_cert.to_csv(saveNodePath + 'Cert.csv',
                index=False, encoding="utf-8-sig")
 

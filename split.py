@@ -30,7 +30,11 @@ split node
 # get work Path
 path = os.getcwd()
 # read csv file
-dataFrame = pd.read_csv(path+"\\data\\CommunityNode.csv")
+dataFrame = pd.read_csv(path+"\\data\\Node.csv")
+community = pd.read_csv('./data/node-community.csv')
+dataFrame = pd.merge(dataFrame, community, left_on='id',
+                right_on='id', how='left')
+del community
 # group
 groups = dataFrame.groupby("type")
 
