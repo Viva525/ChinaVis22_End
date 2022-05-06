@@ -39,7 +39,7 @@ def apply_split(row):
     res = re.findall('[A-Z]', row['industry'])
     for s in res:
         row[dict_map[s]] = True
-    row["weight"] = len(res)
+    row["weight:int"] = len(res)
     return row
 
 
@@ -115,6 +115,7 @@ for insert_c in list(dict_map.values()):
 
 df.insert(df.shape[1], "weight:int", 0)
 
+# df.apply的tqdm写法，用来显示进度条
 df = df.progress_apply(apply_split, axis=1)
 df = df.drop(columns="industry")
 df["community:int"] = df["community:int"].astype(int)
@@ -170,7 +171,7 @@ df_cert.rename(columns={"id": "id:ID",
                         "type": ":LABEL",
                         "community": "community:int"},  inplace=True)
 print(df_cert.columns)
-df["community:int"] = df["community:int"].astype(int)
+df_cert["community:int"] = df_cert["community:int"].astype(int)
 df_cert.to_csv(saveNodePath + 'Cert.csv',
                index=False, encoding="utf-8-sig")
 
