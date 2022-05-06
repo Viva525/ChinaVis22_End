@@ -22,9 +22,11 @@
     "clean": "ets clean"
   },
   "dependencies": {
+    "benchmark": "^2.1.4",
     "egg": "^2.6.1",
     "egg-cors": "^2.2.3",
     "egg-scripts": "^2.6.0",
+    "loadsh": "0.0.4",
     "neo4j-driver": "^4.4.5"
   },
   "devDependencies": {
