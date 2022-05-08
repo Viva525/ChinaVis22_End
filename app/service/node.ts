@@ -36,7 +36,20 @@ export default class Node extends Service {
         const dataClean = (node) => {
             let item = node._fields[0];
             item.group = item.labels[0];
+            // switch(item.group){
+            //     case "IP":
+            //         item.color = "#FFCC80";
+            //         break;
+            //     case "Domain":
+            //         item.color = "#A5D6A7";
+            //         break;
+            //     case "Cert":
+            //         item.color = "#B39DDB";
+            //         break;
+            // }
             item.id = item.identity;
+            item.weight = item.properties.weight;
+            item.properties.weight = undefined;
             item.identity = undefined;
             item.labels = undefined;
             return item;
