@@ -20,7 +20,7 @@ logs/
 
 app/**/*.js
 test/**/*.js
-config/**/*.js
+config/
 app/**/*.map
 test/**/*.map
 config/**/*.map
