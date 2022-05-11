@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { Service } from "egg";
 
 export default class EdgeService extends Service {
   public async getEdgeByCommunity(communityId: number) {
     const dataClean = (edge) => {
-      let item = edge._fields[0];
+      const item = edge._fields[0];
       item.value = item.properties.weight;
       item.source = item.start;
       item.target = item.end;
@@ -28,15 +29,14 @@ export default class EdgeService extends Service {
     const session = driver.session();
     try {
       const res = await session.run(sql);
-      if (res.records.length != 0) {
+      if (res.records.length !== 0) {
         const edges = res.records;
         for (let i = 0; i < edges.length; i++) {
           edges[i] = dataClean(edges[i]);
         }
         return edges;
-      } else {
-        return null;
       }
+      return null;
     } catch (error) {
       console.log(error);
     } finally {

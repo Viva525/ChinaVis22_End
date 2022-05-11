@@ -72,7 +72,7 @@ export default class Node extends Service {
     const session = driver.session();
     try {
       const res = await session.run(sql);
-      if (res.records.length != 0) {
+      if (res.records.length !== 0) {
         const nodes = res.records;
         for (let i = 0; i < nodes.length; i++) {
           nodes[i] = dataClean(nodes[i]);
