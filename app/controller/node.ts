@@ -12,4 +12,6 @@ export default class NodeController extends Controller {
     ctx.body = res;
     ctx.type = 'json';
   }
+
+  
 }

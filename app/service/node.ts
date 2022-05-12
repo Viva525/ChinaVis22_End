@@ -5,7 +5,7 @@ import { Service } from "egg";
  */
 export default class Node extends Service {
   //IP:xxxx
-  public async getNode(Node: Object) {
+  public async getNodeById(node: string[]) {
     const neo4j = require("neo4j-driver");
     const db_config = this.config.neo4j;
     // 连接数据库
@@ -16,8 +16,7 @@ export default class Node extends Service {
         maxTransactionRetryTime: 30000,
       }
     );
-    const [[key, value]] = Object.entries(Node);
-    const sql = `match (n:${key}{id:'${value}'}) return n`;
+    const sql = `match (n:${node[0]}{id:'${node[1]}'}) return n`;
     const session = driver.session();
     try {
       const res = await session.run(sql);

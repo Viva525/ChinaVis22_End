@@ -2,10 +2,10 @@
 // Do not modify this file!!!!!!!!!
 
 import 'egg';
-import ExportResponseTime from '../../../app/middleware/response_time';
+import ExportParamsConvert from '../../../app/middleware/paramsConvert';
 
 declare module 'egg' {
   interface IMiddleware {
-    responseTime: typeof ExportResponseTime;
+    paramsConvert: typeof ExportParamsConvert;
   }
 }
