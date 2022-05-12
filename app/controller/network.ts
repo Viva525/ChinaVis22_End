@@ -37,11 +37,13 @@ export default class NetworkController extends Controller {
   public async getNetworkByParams(){
     const { ctx } = this;
     const params = ctx.request.body;
-    console.log(params);
     switch(params.type){
       case 'node':
         const Node = await ctx.service.node.getNodeById(params.node)
-        ctx.body = Node;
+        ctx.body = {
+          nodes: [Node],
+          links:[]
+        };
     }
     ctx.type = 'json';
   }

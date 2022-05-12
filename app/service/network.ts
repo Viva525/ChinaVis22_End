@@ -32,5 +32,7 @@ export default class Network extends Service {
   public async getFilterNetworkByParams(
     searchParams: string,
     filterNode: Node
-  ) {}
+  ) {
+    console.log(searchParams,filterNode);
+  }
 }

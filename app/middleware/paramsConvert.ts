@@ -3,7 +3,9 @@
 module.exports = () =>{
 	return  async function paramsConvert(ctx, next) {
 		const params:any = {};
-		const body = ctx.request.body.searchParams;
+		let flag: boolean = true;
+		const body: string = ctx.request.body.searchParams;
+		if(body=="") flag = false;
 		const node = body.split(/[?,>,:,\,]/g);
 		if(body.includes('>')){
 			params.type = 'link';
@@ -12,9 +14,13 @@ module.exports = () =>{
 		}else{
 			params.type = 'node';
 		}
-		console.log(node);
 		params.node = node;
 		ctx.request.body = params;
-		await next();
+		if(flag) {
+			await next();
+		}
+		else{
+			ctx.body='no params';
+		}
 	}
 }

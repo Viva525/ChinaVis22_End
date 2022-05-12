@@ -14,6 +14,7 @@ export default class Node extends Service {
       neo4j.auth.basic(db_config.username, db_config.password),
       {
         maxTransactionRetryTime: 30000,
+        disableLosslessIntegers: true,
       }
     );
     const sql = `match (n:${node[0]}{id:'${node[1]}'}) return n`;
