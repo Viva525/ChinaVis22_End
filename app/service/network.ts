@@ -1,8 +1,9 @@
-import { Service } from "egg";
+import { Service } from 'egg';
+import type { Node } from '../types';
 
 export default class Network extends Service {
   public async getNetworkByLimit(nodeNum: number) {
-    const neo4j = require("neo4j-driver");
+    const neo4j = require('neo4j-driver');
     const db_config = this.config.neo4j;
     // 连接数据库
     const driver = neo4j.driver(
@@ -28,4 +29,8 @@ export default class Network extends Service {
       driver.close();
     }
   }
+  public async getFilterNetworkByParams(
+    searchParams: string,
+    filterNode: Node
+  ) {}
 }
