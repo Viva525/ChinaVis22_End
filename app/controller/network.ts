@@ -33,7 +33,6 @@ export default class NetworkController extends Controller {
     };
     ctx.type = 'json';
   }
-<<<<<<< HEAD
 
   public async getNetworkByParams(){
     const { ctx } = this;
@@ -47,6 +46,3 @@ export default class NetworkController extends Controller {
     ctx.type = 'json';
   }
 }
-=======
-}
->>>>>>> 6d4b6a7b04d2ca829033e95448c56a9663066f67
