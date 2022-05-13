@@ -1,22 +1,12 @@
-import { Service } from "egg";
-import { nodeClean } from "../utils";
+import { Service } from 'egg';
+import { connectDB, nodeClean } from '../utils';
 /**
  * 节点查询Service
  */
 export default class Node extends Service {
   //根据节点ID查询节点信息
   public async getNodeById(node: string) {
-    const neo4j = require("neo4j-driver");
-    const db_config = this.config.neo4j;
-    // 连接数据库
-    const driver = neo4j.driver(
-      db_config.url,
-      neo4j.auth.basic(db_config.username, db_config.password),
-      {
-        maxTransactionRetryTime: 30000,
-        disableLosslessIntegers: true,
-      }
-    );
+    const driver = connectDB(this);
     const sql = `match (n{id:'${node}'}) return n`;
     const session = driver.session();
     try {
@@ -37,17 +27,7 @@ export default class Node extends Service {
 
   //获取某社区下的所有节点信息
   public async getNodeByCommunity(communityId: number) {
-    const neo4j = require("neo4j-driver");
-    const db_config = this.config.neo4j;
-    // 连接数据库
-    const driver = neo4j.driver(
-      db_config.url,
-      neo4j.auth.basic(db_config.username, db_config.password),
-      {
-        maxTransactionRetryTime: 30000,
-        disableLosslessIntegers: true,
-      }
-    );
+    const driver = connectDB(this);
     const sql = `match (n{community:${communityId}}) return n`;
     const session = driver.session();
     try {
@@ -70,24 +50,14 @@ export default class Node extends Service {
   }
 
   //按照某种条件查询节点信息
-  public async getNodeByCondition(nodeType: string, condition: string[]){
-    const neo4j = require("neo4j-driver");
-    const db_config = this.config.neo4j;
-    // 连接数据库
-    const driver = neo4j.driver(
-      db_config.url,
-      neo4j.auth.basic(db_config.username, db_config.password),
-      {
-        maxTransactionRetryTime: 30000,
-        disableLosslessIntegers: true,
-      }
-    );
+  public async getNodeByCondition(nodeType: string, condition: string[]) {
+    const driver = connectDB(this);
     let sql = `match (n:${nodeType}) where n.`;
-    for(let i =0; i < condition.length; i++){
+    for (let i = 0; i < condition.length; i++) {
       let con = condition[i].split(':');
       sql += `${con[0]} = '${con[1]}' `;
-      if(i != condition.length - 1){
-        sql += 'and n.'
+      if (i != condition.length - 1) {
+        sql += 'and n.';
       }
     }
     sql += 'return n';
