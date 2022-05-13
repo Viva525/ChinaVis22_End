@@ -1,5 +1,4 @@
 import { Service } from 'egg';
-import type { Node } from '../types';
 
 export default class Network extends Service {
   public async getNetworkByLimit(nodeNum: number) {
@@ -29,10 +28,10 @@ export default class Network extends Service {
       driver.close();
     }
   }
-  public async getFilterNetworkByParams(
-    searchParams: string,
-    filterNode: Node
-  ) {
-    console.log(searchParams,filterNode);
-  }
+  // public async getFilterNetworkByParams(
+  //   searchParams: string,
+  //   filterNode: Node
+  // ) {
+  //   console.log(searchParams,filterNode);
+  // }
 }
