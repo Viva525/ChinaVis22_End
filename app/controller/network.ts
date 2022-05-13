@@ -8,11 +8,11 @@ export default class NetworkController extends Controller {
     const { ctx } = this;
     const params = ctx.request.body;
     console.log(params);
-    const Node = await ctx.service.node.getNodeByCommunity(params.communityId);
-    const Link = await ctx.service.edge.getEdgeByCommunity(params.communityId);
+    const node = await ctx.service.node.getNodeByCommunity(params.communityId);
+    const link = await ctx.service.edge.getEdgeByCommunity(params.communityId);
     ctx.body = {
-      nodes: Node,
-      links: Link,
+      nodes: node,
+      links: link,
     };
     ctx.type = 'json';
   }
@@ -37,13 +37,26 @@ export default class NetworkController extends Controller {
   public async getNetworkByParams(){
     const { ctx } = this;
     const params = ctx.request.body;
+    console.log(params);
     switch(params.type){
       case 'node':
-        const Node = await ctx.service.node.getNodeById(params.node)
+        const node = await ctx.service.node.getNodeById(params.node[0]);
         ctx.body = {
-          nodes: [Node],
+          nodes: [node],
           links:[]
         };
+        break;
+      case 'link':
+        const data = await ctx.service.edge.getEdgeByNode(params.node[0],params.node[1]);
+        ctx.body = data;
+        break;
+      case 'condition':
+        const nodeCondition = await ctx.service.node.getNodeByCondition(params.node[0],params.node.slice(1));
+        ctx.body = {
+          nodes: [nodeCondition],
+          links: []
+        }
+        break;
     }
     ctx.type = 'json';
   }

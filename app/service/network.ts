@@ -11,6 +11,7 @@ export default class Network extends Service {
       neo4j.auth.basic(db_config.username, db_config.password),
       {
         maxTransactionRetryTime: 30000,
+        disableLosslessIntegers: true,
       }
     );
     const sql = `match (n)-[r]-(m) return n,m,r limit ${nodeNum}`;
@@ -35,4 +36,5 @@ export default class Network extends Service {
   ) {
     console.log(searchParams,filterNode);
   }
+
 }
