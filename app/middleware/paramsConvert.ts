@@ -6,7 +6,7 @@ module.exports = () =>{
 		let flag: boolean = true;
 		const body: string = ctx.request.body.searchParams;
 		if(body=="") flag = false;
-		const node = body.split(/[?,>,:,\,]/g);
+		const node = body.split(/[?,>]/g);
 		if(body.includes('>')){
 			params.type = 'link';
 		}else if(body.includes('?')){
