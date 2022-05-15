@@ -1,5 +1,5 @@
 import { Service } from 'egg';
-import { connectDB } from '../utils';
+import { connectDB, edgeClean, nodeClean } from '../utils';
 
 export default class Network extends Service {
   public async getNetworkByLimit(nodeNum: number) {
@@ -43,7 +43,15 @@ export default class Network extends Service {
       const nodeRes = await session.run(nodeSql);
       const linkRes = await session.run(linkSql);
       if (nodeRes.records.length !== 0 && linkRes.records.length !== 0) {
-        return { nodes: nodeRes.records, links: linkRes.records };
+        const nodes = nodeRes.records;
+        const links = linkRes.records;
+        for (let i = 0; i < nodes.length; i++) {
+          nodes[i] = nodeClean(nodes[i]._fields[0]);
+        }
+        for (let i = 0; i < links.length; i++) {
+          links[i] = edgeClean(links[i]._fields[0]);
+        }
+        return { nodes: nodes, links: links };
       } else {
         return null;
       }
