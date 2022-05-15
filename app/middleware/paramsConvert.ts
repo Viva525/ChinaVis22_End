@@ -7,12 +7,17 @@ module.exports = () =>{
 		const body: string = ctx.request.body.searchParams;
 		if(body=="") flag = false;
 		const node = body.split(/[?,>]/g);
+		const reg = /[a-zA-Z]+/g
 		if(body.includes('>')){
 			params.type = 'link';
 		}else if(body.includes('?')){
 			params.type = 'condition';
-		}else{
+		}
+		else if(reg.test(body)){
 			params.type = 'node';
+		}
+		else{
+			params.type = 'communities';
 		}
 		params.node = node;
 		ctx.request.body = params;
