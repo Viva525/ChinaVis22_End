@@ -21,15 +21,14 @@ export default class Network extends Service {
     }
   }
   public async getFilterNetworkByCommunities(communities: number[]) {
-    console.log(communities);
     const driver = connectDB(this);
     let nodeSql = `match (n) where `;
     let linkSql = `match (n)-[r]-(m) where `;
     let linkSqlWhere = `(`;
     for (let i = 0; i < communities.length; i++) {
       if (i !== communities.length - 1) {
-        nodeSql += 'n.community=' + `${communities[i]}` + 'or';
-        linkSqlWhere += 'n.community=' + `${communities[i]}` + 'or';
+        nodeSql += 'n.community=' + `${communities[i]}` + ' or ';
+        linkSqlWhere += 'n.community=' + `${communities[i]}` + ' or ';
       } else {
         nodeSql += 'n.community=' + `${communities[i]}` + ' return n';
         linkSqlWhere += 'n.community=' + `${communities[i]}` + ')';

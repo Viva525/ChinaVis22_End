@@ -63,6 +63,10 @@ export default class NetworkController extends Controller {
           links: [],
         };
         break;
+      case 'communities':
+        const communities = await ctx.service.network.getFilterNetworkByCommunities(params.node);
+        ctx.body = communities;
+        break;
     }
     ctx.type = 'json';
   }

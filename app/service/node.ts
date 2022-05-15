@@ -12,7 +12,7 @@ export default class Node extends Service {
     try {
       const res = await session.run(sql);
       if (res.records.length != 0) {
-        const node = res.records[0]._fields[0];
+        const node = nodeClean(res.records[0]._fields[0]);
         return node;
       } else {
         return null;

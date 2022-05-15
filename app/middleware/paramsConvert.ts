@@ -6,7 +6,7 @@ module.exports = () =>{
 		let flag: boolean = true;
 		const body: string = ctx.request.body.searchParams;
 		if(body=="") flag = false;
-		const node = body.split(/[?,>]/g);
+		let node = body.split(/[?,>]/g);
 		const reg = /[a-zA-Z]+/g
 		if(body.includes('>')){
 			params.type = 'link';
@@ -18,6 +18,7 @@ module.exports = () =>{
 		}
 		else{
 			params.type = 'communities';
+			node.forEach(item => Number.parseInt(item));
 		}
 		params.node = node;
 		ctx.request.body = params;
