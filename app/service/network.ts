@@ -6,13 +6,13 @@ export default class Network extends Service {
   public async getAllCommunitiesBy() {
     try {
       const nodes = JSON.parse(
-        readFileSync('./app/public/community_node1.json', 'utf-8')
+        readFileSync('./data/community_node2.json', 'utf-8')
       );
       const links = JSON.parse(
-        readFileSync('./app/public/community_link.json', 'utf-8')
+        readFileSync('./data/community_link.json', 'utf-8')
       );
       writeFileSync(
-        './app/public/allCommunity.json',
+        './data/allCommunity.json',
         JSON.stringify({ nodes, links })
       );
       return { nodes, links };

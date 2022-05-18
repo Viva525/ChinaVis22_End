@@ -55,8 +55,11 @@ export default class NetworkController extends Controller {
       case 'node':
         const node = await ctx.service.node.getNodeById(params.node[0]);
         ctx.body = {
-          nodes: [node],
-          links: [],
+          data: {
+            nodes: [node],
+            links: [],
+          },
+          type: params.type,
         };
         break;
       case 'link':
@@ -64,7 +67,7 @@ export default class NetworkController extends Controller {
           params.node[0],
           params.node[1]
         );
-        ctx.body = data;
+        ctx.body = { data: data, type: params.type };
         break;
       case 'condition':
         const nodeCondition = await ctx.service.node.getNodeByCondition(
@@ -72,14 +75,17 @@ export default class NetworkController extends Controller {
           params.node.slice(1)
         );
         ctx.body = {
-          nodes: [nodeCondition],
-          links: [],
+          data: {
+            nodes: [nodeCondition],
+            links: [],
+          },
+          type: params.type,
         };
         break;
       case 'communities':
         const communities =
           await ctx.service.network.getFilterNetworkByCommunities(params.node);
-        ctx.body = communities;
+        ctx.body = { data: communities, type: params.type };
         break;
     }
     ctx.type = 'json';
