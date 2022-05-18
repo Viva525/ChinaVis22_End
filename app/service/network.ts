@@ -1,7 +1,26 @@
 import { Service } from 'egg';
+import { readFileSync, writeFileSync } from 'fs';
 import { connectDB, edgeClean, nodeClean } from '../utils';
 
 export default class Network extends Service {
+  public async getAllCommunitiesBy() {
+    try {
+      const nodes = JSON.parse(
+        readFileSync('./app/public/community_node1.json', 'utf-8')
+      );
+      const links = JSON.parse(
+        readFileSync('./app/public/community_link.json', 'utf-8')
+      );
+      writeFileSync(
+        './app/public/allCommunity.json',
+        JSON.stringify({ nodes, links })
+      );
+      return { nodes, links };
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   public async getNetworkByLimit(nodeNum: number) {
     const driver = connectDB(this);
     const sql = `match (n)-[r]-(m) return n,m,r limit ${nodeNum}`;

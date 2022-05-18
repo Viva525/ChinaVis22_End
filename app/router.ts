@@ -14,4 +14,5 @@ export default (app: Application) => {
     '/getFilterNetworkByCommunities',
     controller.network.getFilterNetworkByCommunities
   );
+  router.post('/getAllCommunities', controller.network.getAllCommunities);
 };

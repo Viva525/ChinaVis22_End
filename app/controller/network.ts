@@ -2,6 +2,19 @@ import { Controller } from 'egg';
 
 export default class NetworkController extends Controller {
   /**
+   * 初始化社区总览数据
+   */
+  public async getAllCommunities() {
+    const { ctx } = this;
+    const { nodes, links }: any =
+      await ctx.service.network.getAllCommunitiesBy();
+    ctx.body = {
+      nodes,
+      links,
+    };
+    ctx.type = 'json';
+  }
+  /**
    * 根据节点ID获取节点信息
    */
   public async getNetworkByCommunity() {
@@ -64,7 +77,8 @@ export default class NetworkController extends Controller {
         };
         break;
       case 'communities':
-        const communities = await ctx.service.network.getFilterNetworkByCommunities(params.node);
+        const communities =
+          await ctx.service.network.getFilterNetworkByCommunities(params.node);
         ctx.body = communities;
         break;
     }
