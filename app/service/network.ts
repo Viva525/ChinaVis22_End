@@ -1,21 +1,21 @@
 import { Service } from 'egg';
-import { readFileSync, writeFileSync } from 'fs';
+// import { readFileSync, writeFileSync } from 'fs';
 import { connectDB, edgeClean, nodeClean } from '../utils';
 
 export default class Network extends Service {
   public async getAllCommunitiesBy() {
     try {
-      const nodes = JSON.parse(
-        readFileSync('./data/community_node2.json', 'utf-8')
-      );
-      const links = JSON.parse(
-        readFileSync('./data/community_link.json', 'utf-8')
-      );
-      writeFileSync(
-        './data/allCommunity.json',
-        JSON.stringify({ nodes, links })
-      );
-      return { nodes, links };
+      // const nodes = JSON.parse(
+      //   readFileSync('./data/community_node2.json', 'utf-8')
+      // );
+      // const links = JSON.parse(
+      //   readFileSync('./data/community_link.json', 'utf-8')
+      // );
+      // writeFileSync(
+      //   './data/allCommunity.json',
+      //   JSON.stringify({ nodes, links })
+      // );
+      // return { nodes, links };
     } catch (error) {
       console.log(error);
     }
