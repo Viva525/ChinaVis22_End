@@ -17,18 +17,18 @@ export default class NetworkController extends Controller {
   /**
    * 根据节点ID获取节点信息
    */
-  public async getNetworkByCommunity() {
-    const { ctx } = this;
-    const params = ctx.request.body;
-    console.log(params);
-    const node = await ctx.service.node.getNodeByCommunity(params.communityId);
-    const link = await ctx.service.edge.getEdgeByCommunity(params.communityId);
-    ctx.body = {
-      nodes: node,
-      links: link,
-    };
-    ctx.type = 'json';
-  }
+  // public async getNetworkByCommunity() {
+  //   const { ctx } = this;
+  //   const params = ctx.request.body;
+  //   console.log(params);
+  //   const node = await ctx.service.node.getNodeByCommunity(params.communityId);
+  //   const link = await ctx.service.edge.getEdgeByCommunity(params.communityId);
+  //   ctx.body = {
+  //     nodes: node,
+  //     links: link,
+  //   };
+  //   ctx.type = 'json';
+  // }
 
   /**
    * 根据search栏的参数和filter栏的参数获取graph

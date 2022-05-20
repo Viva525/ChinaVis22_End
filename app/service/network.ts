@@ -60,19 +60,19 @@ export default class Network extends Service {
     try {
       const nodeRes = await session.run(nodeSql);
       const linkRes = await session.run(linkSql);
-      if (nodeRes.records.length !== 0 && linkRes.records.length !== 0) {
-        const nodes = nodeRes.records;
-        const links = linkRes.records;
+      const nodes = nodeRes.records;
+      const links = linkRes.records;
+      if (nodeRes.records.length !== 0) {
         for (let i = 0; i < nodes.length; i++) {
           nodes[i] = nodeClean(nodes[i]._fields[0]);
         }
+      }
+      if (linkRes.records.length !== 0) {
         for (let i = 0; i < links.length; i++) {
           links[i] = edgeClean(links[i]._fields[0]);
         }
-        return { nodes: nodes, links: links };
-      } else {
-        return null;
       }
+      return { nodes: nodes, links: links };
     } catch (error) {
       console.log(error);
     } finally {
