@@ -1,10 +1,15 @@
 import { Service } from 'egg';
+import { readFileSync } from 'fs';
 // import { readFileSync, writeFileSync } from 'fs';
 import { connectDB, edgeClean, nodeClean } from '../utils';
 
 export default class Network extends Service {
   public async getAllCommunitiesBy() {
     try {
+      const data = JSON.parse(
+        readFileSync('./app/public/allCommunity.json', 'utf-8')
+      );
+      return data;
       // const nodes = JSON.parse(
       //   readFileSync('./data/community_node2.json', 'utf-8')
       // );
