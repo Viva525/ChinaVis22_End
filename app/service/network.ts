@@ -6,10 +6,13 @@ import { connectDB, edgeClean, nodeClean } from '../utils';
 export default class Network extends Service {
   public async getAllCommunitiesBy() {
     try {
-      const data = JSON.parse(
-        readFileSync('./app/public/allCommunity.json', 'utf-8')
+      const nodes = JSON.parse(
+        readFileSync('./app/public/community_node.json', 'utf-8')
       );
-      return data;
+      const links = JSON.parse(
+        readFileSync('./app/public/community_link.json', 'utf-8')
+      );
+      return { nodes, links };
       // const nodes = JSON.parse(
       //   readFileSync('./data/community_node2.json', 'utf-8')
       // );
