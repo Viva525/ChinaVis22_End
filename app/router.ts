@@ -15,4 +15,5 @@ export default (app: Application) => {
     controller.network.getFilterNetworkByCommunities
   );
   router.post('/getAllCommunities', controller.network.getAllCommunities);
+  router.post('/getLinksBT2Nodes', controller.link.getLinksBT2Nodes);
 };
