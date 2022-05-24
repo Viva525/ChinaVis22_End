@@ -1,6 +1,7 @@
-# coding: utf-8
-
-# In[ ]:
+import argparse
+parser = argparse.ArgumentParser(description="manual to this script")
+parser.add_argument("--B",type=list,default=[[3,"r_cert","Domain"],[2,"IP","Cert"],[2,"r_cert_chain","Whois_Phone"]])
+args = parser.parse_args()
 import numpy as np
 R_I = [0, 0, 0.52, 0.89, 1.12, 1.26, 1.36, 1.41, 1.46, 1.49, 1.52, 1.54, 1.56, 1.58,1.59]
 def isConsist(A):
@@ -10,7 +11,7 @@ def isConsist(A):
     CI = (eig_max - n) / (n - 1)
     RI = R_I[n - 1]
     CR = CI / RI
-    if CI < 0.1:
+    if CR < 0.1:
         return bool(1)
     else:
         return bool(0)
@@ -32,9 +33,9 @@ def t_v(A):
     return w_3
 
 
-# 权重 输入进来的是四组数据 分别为节点跳数 关联重要性 目标节点字段
+# 权重 输入进来的是三组数据 分别为节点跳数 关联重要性 目标节点字段
 '''传入格式   关联重要性得输入字段
-方案
+方案(index) 1 2 3
 节点跳数     3 2 2  
 关联重要性   3 4 2
 目标字段     1 4 5
@@ -46,7 +47,7 @@ def get_B(B):
     B = B.T  # 按列放置
     B_1 = B[0]  # 节点跳数
     B_2 = B[1]  # 关联重要性
-    for i in range(B_2):
+    for i in range(len(B_2)):
         if B_2[i] == "r_cert" or B_2[i] == "r_subdomain" or B_2[i] == "r_request_jump" or B_2[i] == "r_dns_a":
             B_2[i] = 9
         elif B_2[i] == "IP" or B_2[i] == "r_whois_name" or B_2[i] == "r_whois_email":
@@ -56,7 +57,7 @@ def get_B(B):
         else:
             B_2[i] = 1
     B_3 = B[2]  # 目标字段
-    for i in range(B_3):
+    for i in range(len(B_3)):
         if B_3[i] == "Domain" or B_3[i] == "IP" or B_3[i] == "Cert":
             B_3[i] = 9
         elif B_3[i] == "Whois_Name" or B_3[i] == "Whois_Phone" or B_3[i] == "Whois_Email":
@@ -67,20 +68,20 @@ def get_B(B):
 
     # 节点跳数
     B_1_1 = np.eye(len(B))
-    for i in range(len(B)):
-        for j in range(len(B)):
-            B_1_1[i][j] = B_1[i] / B_1[j]
+    for i in range(len(B_1)):
+        for j in range(len(B_1)):
+            B_1_1[i][j] = int(B_1[i]) / int(B_1[j])
     # 关联重要性
     B_2_1 = np.eye(len(B))
-    for i in range(len(B)):
-        for j in range(len(B)):
-            B_2_1[i][j] = B_2[i] / B_2[j]
+    for i in range(len(B_2)):
+        for j in range(len(B_2)):
+            B_2_1[i][j] = int(B_2[i]) / int(B_2[j])
 
     # 目标字段
     B_3_1 = np.eye(len(B))
-    for i in range(len(B)):
-        for j in range(len(B)):
-            B_3_1[i][j] = B_3[i] / B_3[j]
+    for i in range(len(B_3)):
+        for j in range(len(B_3)):
+            B_3_1[i][j] = int(B_3[i]) / int(B_3[j])
     matrix = []
     if isConsist(B_1_1) and isConsist(B_2_1) and isConsist(B_3_1):
         w_0 = t_v(B_1_1)  # 得到指标权重矩阵
@@ -89,7 +90,7 @@ def get_B(B):
         matrix.append(w_0)
         matrix.append(w_1)
         matrix.append(w_2)
-
+    return matrix
 
 def main(A, B):  # B为各方案的评分矩阵,shape为n*3 行*列  方案数*指标数
     if isConsist(A):
@@ -97,7 +98,17 @@ def main(A, B):  # B为各方案的评分矩阵,shape为n*3 行*列  方案数*�
         score = []
         for i in range(len(B)):  # 方案序列
             sum_score = 0
-            for j in range(W_0):  # 求该方案的值
+            for j in range(len(W_0)):  # 求该方案的值
                 sum_score += W_0[j] * B[i][j]
             score.append(sum_score)
+        print(score)
         return score  # 返回得分序列
+
+#demo
+#输入A矩阵
+A=np.array([[1,1/2,4],[2,1,7],[1/4,1/7,1]])
+# B=np.array([[3,2,2],["r_cert","IP","r_cert_chain"],["Domain","Cert","Whois_Phone"]])
+B1 = args.B
+B=np.array(B1)
+B=get_B(B)
+main(A,B)
