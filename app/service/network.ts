@@ -80,6 +80,7 @@ export default class Network extends Service {
           links[i] = edgeClean(links[i]._fields[0]);
         }
       }
+
       return { nodes: nodes, links: links };
     } catch (error) {
       console.log(error);
