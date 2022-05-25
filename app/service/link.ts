@@ -63,25 +63,26 @@ export default class Network extends Service {
           }
           // 对links遍历， 判断正向还是反向， 加入link数组
           for (let i = 0; i < item._fields[0].segments.length; i++) {
-            if (
-              resItem.nodes[i].id ===
-              item._fields[0].segments[i].relationship.start
-            ) {
-              if (item._fields[0].segments[i].end.identity !== undefined) {
-                resItem.nodes.push(nodeClean(item._fields[0].segments[i].end));
+            if (item._fields[0].segments[i].end.identity !== undefined) {
+              if (
+                item._fields[0].segments[i].end.identity !==
+                item._fields[0].segments[i].relationship.end
+              ) {
+                resItem.links.push(1);
               } else {
-                resItem.nodes.push(item._fields[0].segments[i].end);
+                resItem.links.push(0);
               }
-              resItem.links.push(0);
+              resItem.nodes.push(nodeClean(item._fields[0].segments[i].end));
             } else {
-              if (item._fields[0].segments[i].start.identity !== undefined) {
-                resItem.nodes.push(
-                  nodeClean(item._fields[0].segments[i].start)
-                );
+              if (
+                item._fields[0].segments[i].end.id !==
+                item._fields[0].segments[i].relationship.end
+              ) {
+                resItem.links.push(1);
               } else {
-                resItem.nodes.push(item._fields[0].segments[i].start);
+                resItem.links.push(0);
               }
-              resItem.links.push(1);
+              resItem.nodes.push(item._fields[0].segments[i].end);
             }
           }
           result.push(resItem);
