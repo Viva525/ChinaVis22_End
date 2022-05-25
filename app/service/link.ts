@@ -33,24 +33,32 @@ export default class Network extends Service {
       if (node1.startsWith('IP')) {
         keyIPSQL1 = `match (n:Domain)-->(m:IP) with n,m where m.id="${node1}" match (n)-->(x:IP) where x.id<>"${node1}" return n`;
         const resIP1 = await session.run(keyIPSQL1);
-        if (!isNodeKey(res1) || resIP1.records[0]._fields.length) {
+        if (
+          !isNodeKey(res1) ||
+          (resIP1.records.length !== 0 && resIP1.records[0]._fields.length)
+        ) {
           flag = false;
         }
-        console.log(isNodeKey(res1), resIP1.records[0]._fields.length);
       }
       if (node2.startsWith('IP')) {
         keyIPSQL2 = `match (n:Domain)-->(m:IP) with n,m where m.id="${node2}" match (n)-->(x:IP) where x.id<>"${node2}" return n`;
         const resIP2 = await session.run(keyIPSQL2);
-        if (!isNodeKey(res2) || resIP2.records[0]._fields.length) {
+        if (
+          !isNodeKey(res2) ||
+          (resIP2.records.length !== 0 && resIP2.records[0]._fields.length)
+        ) {
           flag = false;
         }
-        console.log(isNodeKey(res2), resIP2.records[0]._fields.length);
       }
 
       if (flag) {
-        linkSQL = `match p=(n{id:"${node1}"})-[*..4]-(m{id:"${node2}"}) return p`;
-        const link = await session.run(linkSQL);
-        for (let item of link.records) {
+        linkSQL = `match p=(n{id:"${node1}"})-[*..2]-(m{id:"${node2}"}) return p`;
+        const link1 = await session.run(linkSQL);
+        linkSQL = `match p=(n{id:"${node1}"})-[*3]-(m{id:"${node2}"}) return p limit 30`;
+        const link2 = await session.run(linkSQL);
+        linkSQL = `match p=(n{id:"${node1}"})-[*4]-(m{id:"${node2}"}) return p limit 30`;
+        const link3 = await session.run(linkSQL);
+        for (let item of [...link1.records, ...link2.records, ...link3.records]) {
           let resItem: { nodes: any[]; links: any[] } = {
             nodes: [],
             links: [],
