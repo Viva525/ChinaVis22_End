@@ -1,5 +1,5 @@
 import { Service } from 'egg';
-import { connectDB, edgeClean, nodeClean } from '../utils';
+import { connectDB, nodeClean } from '../utils';
 
 export default class Network extends Service {
   public async getLinksBT2Nodes(node1: string, node2: string) {
@@ -11,6 +11,7 @@ export default class Network extends Service {
     let keyIPSQL2;
     let linkSQL;
     let flag = true;
+    let result: { nodes: any[]; links: any[] }[] = [];
     const isNodeKey = (res: any) => {
       let degree = res.records[0]._fields[1];
       if (res.records[0]._fields[0].properties.hasOwnProperty('asn')) {
@@ -45,29 +46,45 @@ export default class Network extends Service {
         }
         console.log(isNodeKey(res2), resIP2.records[0]._fields.length);
       }
-      let result: { nodes: any; links: any }[] = [
-        { nodes: [], links: [] },
-        { nodes: [], links: [] },
-        { nodes: [], links: [] },
-        { nodes: [], links: [] },
-      ];
+
       if (flag) {
         linkSQL = `match p=(n{id:"${node1}"})-[*..4]-(m{id:"${node2}"}) return p`;
         const link = await session.run(linkSQL);
         for (let item of link.records) {
+          let resItem: { nodes: any[]; links: any[] } = {
+            nodes: [],
+            links: [],
+          };
+          // 判断是否需要clean， push start节点
           if (item._fields[0].segments[0].start.identity !== undefined) {
-            result[item._fields[0].length - 1].nodes.push(
-              nodeClean(item._fields[0].segments[0].start)
-            );
+            resItem.nodes.push(nodeClean(item._fields[0].segments[0].start));
+          } else {
+            resItem.nodes.push(item._fields[0].segments[0].start);
           }
-          for (let seg of item._fields[0].segments) {
-            if (seg.end.identity !== undefined) {
-              result[item._fields[0].length - 1].nodes.push(nodeClean(seg.end));
+          // 对links遍历， 判断正向还是反向， 加入link数组
+          for (let i = 0; i < item._fields[0].segments.length; i++) {
+            if (
+              resItem.nodes[i].id ===
+              item._fields[0].segments[i].relationship.start
+            ) {
+              if (item._fields[0].segments[i].end.identity !== undefined) {
+                resItem.nodes.push(nodeClean(item._fields[0].segments[i].end));
+              } else {
+                resItem.nodes.push(item._fields[0].segments[i].end);
+              }
+              resItem.links.push(0);
+            } else {
+              if (item._fields[0].segments[i].start.identity !== undefined) {
+                resItem.nodes.push(
+                  nodeClean(item._fields[0].segments[i].start)
+                );
+              } else {
+                resItem.nodes.push(item._fields[0].segments[i].start);
+              }
+              resItem.links.push(1);
             }
-            result[item._fields[0].length - 1].links.push(
-              edgeClean(seg.relationship)
-            );
           }
+          result.push(resItem);
         }
       }
 
