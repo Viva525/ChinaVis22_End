@@ -1,5 +1,5 @@
 import { Service } from 'egg';
-import { connectDB, nodeClean } from '../utils';
+import { connectDB, edgeClean, nodeClean } from '../utils';
 
 export default class Network extends Service {
   public async getLinksBT2Nodes(node1: string, node2: string) {
@@ -68,9 +68,15 @@ export default class Network extends Service {
                 item._fields[0].segments[i].end.identity !==
                 item._fields[0].segments[i].relationship.end
               ) {
-                resItem.links.push(1);
+                resItem.links.push({
+                  ...edgeClean(item._fields[0].segments[i].relationship),
+                  direction: 1,
+                });
               } else {
-                resItem.links.push(0);
+                resItem.links.push({
+                  ...edgeClean(item._fields[0].segments[i].relationship),
+                  direction: 0,
+                });
               }
               resItem.nodes.push(nodeClean(item._fields[0].segments[i].end));
             } else {
@@ -78,9 +84,15 @@ export default class Network extends Service {
                 item._fields[0].segments[i].end.id !==
                 item._fields[0].segments[i].relationship.end
               ) {
-                resItem.links.push(1);
+                resItem.links.push({
+                  ...edgeClean(item._fields[0].segments[i].relationship),
+                  direction: 1,
+                });
               } else {
-                resItem.links.push(0);
+                resItem.links.push({
+                  ...edgeClean(item._fields[0].segments[i].relationship),
+                  direction: 0,
+                });
               }
               resItem.nodes.push(item._fields[0].segments[i].end);
             }
