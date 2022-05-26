@@ -17,4 +17,8 @@ export default (app: Application) => {
   router.post('/getAllCommunities', controller.network.getAllCommunities);
   router.post('/recommand', controller.node.recommand);
   router.post('/getLinksBT2Nodes', controller.link.getLinksBT2Nodes);
+  router.post(
+    '/getAllCommuntiesScatter',
+    controller.node.getAllCommuntiesScatter
+  );
 };

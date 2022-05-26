@@ -1,7 +1,6 @@
 import { Controller } from 'egg';
 
 export default class NodeController extends Controller {
-
   /**
    * 根据节点ID获取节点信息
    */
@@ -12,14 +11,21 @@ export default class NodeController extends Controller {
     ctx.body = res;
     ctx.type = 'json';
   }
-  
+
   /**
    * 根据节点ID获取4跳内其他社区节点
    */
-   public async recommand() {
+  public async recommand() {
     const { ctx } = this;
     const params = ctx.request.body;
     const res = await ctx.service.node.recommand(params);
+    ctx.body = res;
+    ctx.type = 'json';
+  }
+
+  public async getAllCommuntiesScatter() {
+    const { ctx } = this;
+    const res = await ctx.service.node.getAllCommuntiesScatter();
     ctx.body = res;
     ctx.type = 'json';
   }

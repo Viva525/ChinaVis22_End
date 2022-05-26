@@ -1,4 +1,5 @@
 import { Service } from 'egg';
+import { readFileSync } from 'fs';
 import { stdout } from 'process';
 import { connectDB, nodeClean } from '../utils';
 /**
@@ -98,15 +99,18 @@ export default class Node extends Service {
       if (response.records.length !== 0) {
         console.log(res);
         const child_process = require('child_process');
-        var workerProcess = child_process.exec('AHP.py' + response, function (error, stdout, stderr) {
-          if (error) {
-            console.log(error.stack);
-            console.log('Error code: ' + error.code);
-            console.log('Signal recevied: ' + error.signal);
+        var workerProcess = child_process.exec(
+          'AHP.py' + response,
+          function (error, stdout, stderr) {
+            if (error) {
+              console.log(error.stack);
+              console.log('Error code: ' + error.code);
+              console.log('Signal recevied: ' + error.signal);
+            }
+            console.log('stdout: ' + stdout);
+            console.log('stderr: ' + stderr);
           }
-          console.log('stdout: ' + stdout);
-          console.log('stderr: ' + stderr);
-        });
+        );
         workerProcess.on('exit', function (code) {
           console.log('子进程已退出，退出码' + code);
         });
@@ -119,6 +123,17 @@ export default class Node extends Service {
     } finally {
       session.close();
       driver.close();
+    }
+  }
+
+  public async getAllCommuntiesScatter() {
+    try {
+      const data = JSON.parse(
+        readFileSync('./app/public/scatter.json', 'utf-8')
+      );
+      return data;
+    } catch (error) {
+      console.log(error);
     }
   }
 }
