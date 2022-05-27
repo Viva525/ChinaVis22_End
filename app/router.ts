@@ -21,4 +21,5 @@ export default (app: Application) => {
     '/getAllCommuntiesScatter',
     controller.node.getAllCommuntiesScatter
   );
+  router.post('/getCommunitiesInfo', controller.network.getCommunitiesInfo);
 };

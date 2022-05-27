@@ -136,4 +136,51 @@ export default class Node extends Service {
       console.log(error);
     }
   }
+
+  public async getCommunitiesNodeInfo(communities: number[]) {
+    const driver = connectDB(this);
+    const session = driver.session();
+    let industrySQL: string[] = [];
+    try {
+      const count_res: any[] = [];
+      const industry_res: any[] = [];
+      for (let c of communities) {
+        let li: number[] = [];
+        for (let i of ['Domain', 'Cert', 'IP']) {
+          const sql = `match (n:${i}{community:${c}}) return count(n) as c_n`;
+          const res = await session.run(sql);
+          li.push(res.records[0]._fields[0]);
+        }
+        count_res.push(li);
+        industrySQL.push(`match (n:Domain{community:${c}}) return n`);
+      }
+      for (let i of industrySQL) {
+        const res = await session.run(i);
+        let industry = {
+          porn: 0,
+          gambling: 0,
+          fraud: 0,
+          drug: 0,
+          gun: 0,
+          hacker: 0,
+          trading: 0,
+          pay: 0,
+          other: 0,
+        };
+        res.records
+          .map((d: any) => {
+            return nodeClean(d._fields[0]);
+          })
+          .forEach((element: any) => {
+            if (element.properties.porn) {
+              industry.porn += 1;
+            }
+          });
+        industry_res.push(industry);
+      }
+      return { count_res, industry_res };
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }

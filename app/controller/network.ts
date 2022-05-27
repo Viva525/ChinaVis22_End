@@ -46,7 +46,9 @@ export default class NetworkController extends Controller {
     };
     ctx.type = 'json';
   }
-
+  /**
+   * 根据search栏的参数查询
+   */
   public async getNetworkByParams() {
     const { ctx } = this;
     const params = ctx.request.body;
@@ -88,6 +90,16 @@ export default class NetworkController extends Controller {
         ctx.body = { data: communities, type: params.type };
         break;
     }
+    ctx.type = 'json';
+  }
+
+  public async getCommunitiesInfo() {
+    const { ctx } = this;
+    const params = ctx.request.body;
+    const count_res = await ctx.service.node.getCommunitiesNodeInfo(params);
+    const result = await ctx.service.edge.getCommunitiesEdgeInfo(params);
+
+    ctx.body = { count_res, result };
     ctx.type = 'json';
   }
 }
