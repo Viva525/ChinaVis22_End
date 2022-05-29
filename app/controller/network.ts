@@ -112,7 +112,7 @@ export default class NetworkController extends Controller {
     if (params.constructor === Object) {
       params = params.communities;
     }
-    const res = ctx.service.network.getCurrNeighbours(params);
+    const res = await ctx.service.network.getCurrNeighbours(params);
     ctx.body = res;
     ctx.type = 'json';
   }
