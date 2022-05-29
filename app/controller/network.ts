@@ -102,4 +102,12 @@ export default class NetworkController extends Controller {
     ctx.body = { count_res, result };
     ctx.type = 'json';
   }
+
+  public async getCurrNeighbours() {
+    const { ctx } = this;
+    const params = ctx.request.body;
+    const res = ctx.service.network.getCurrNeighbours(params);
+    ctx.body = res;
+    ctx.type = 'json';
+  }
 }
