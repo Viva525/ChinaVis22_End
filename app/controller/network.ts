@@ -95,7 +95,10 @@ export default class NetworkController extends Controller {
 
   public async getCommunitiesInfo() {
     const { ctx } = this;
-    const params = ctx.request.body;
+    let params = ctx.request.body;
+    if (params.constructor === Object) {
+      params = params.communities;
+    }
     const count_res = await ctx.service.node.getCommunitiesNodeInfo(params);
     const result = await ctx.service.edge.getCommunitiesEdgeInfo(params);
 
@@ -105,7 +108,10 @@ export default class NetworkController extends Controller {
 
   public async getCurrNeighbours() {
     const { ctx } = this;
-    const params = ctx.request.body;
+    let params = ctx.request.body;
+    if (params.constructor === Object) {
+      params = params.communities;
+    }
     const res = ctx.service.network.getCurrNeighbours(params);
     ctx.body = res;
     ctx.type = 'json';
