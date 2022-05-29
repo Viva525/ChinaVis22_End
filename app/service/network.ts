@@ -98,7 +98,9 @@ export default class Network extends Service {
       const cSet = new Set();
       for (let c = 0; c < nodes.length; c++) {
         if (communities.includes(nodes[c].id)) {
-          cSet.add(nodes[c].neighbour);
+          for (let n of nodes[c].neighbour) {
+            cSet.add(n);
+          }
         }
       }
       const res: {
@@ -175,7 +177,7 @@ export default class Network extends Service {
           res.push(rect);
         }
       }
-      return { res };
+      return res;
     } catch (error) {
       console.log(error);
     }
