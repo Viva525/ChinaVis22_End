@@ -105,51 +105,64 @@ export default class Network extends Service {
         id: number;
         wrong_sum: number;
         wrong_list: {
-          porn?: number;
-          gambling?: number;
-          fraud?: number;
-          drug?: number;
-          gun?: number;
-          hacker?: number;
-          trading?: number;
-          pay?: number;
-          other?: number;
+          type: string;
+          num: number;
         }[];
       }[] = [];
       for (let c = 0; c < nodes.length; c++) {
         if (cSet.has(nodes[c].id)) {
           let wrong_sum = 0;
           let wrong_list: {
-            porn?: number;
-            gambling?: number;
-            fraud?: number;
-            drug?: number;
-            gun?: number;
-            hacker?: number;
-            trading?: number;
-            pay?: number;
-            other?: number;
+            type: string;
+            num: number;
           }[] = [];
           for (let w = 0; w < nodes[c].wrong_list.length; w++) {
             if (nodes[c].wrong_list[w] > 0) {
               if (w === 0) {
-                wrong_list.push({ porn: nodes[c].wrong_list[w] });
+                wrong_list.push({
+                  type: 'porn',
+                  num: nodes[c].wrong_list[w],
+                });
               } else if (w === 1) {
-                wrong_list.push({ gambling: nodes[c].wrong_list[w] });
+                wrong_list.push({
+                  type: 'gambling',
+                  num: nodes[c].wrong_list[w],
+                });
               } else if (w === 2) {
-                wrong_list.push({ fraud: nodes[c].wrong_list[w] });
+                wrong_list.push({
+                  type: 'fraud',
+                  num: nodes[c].wrong_list[w],
+                });
               } else if (w === 3) {
-                wrong_list.push({ drug: nodes[c].wrong_list[w] });
+                wrong_list.push({
+                  type: 'drug',
+                  num: nodes[c].wrong_list[w],
+                });
               } else if (w === 4) {
-                wrong_list.push({ gun: nodes[c].wrong_list[w] });
+                wrong_list.push({
+                  type: 'gun',
+                  num: nodes[c].wrong_list[w],
+                });
               } else if (w === 5) {
-                wrong_list.push({ hacker: nodes[c].wrong_list[w] });
+                wrong_list.push({
+                  type: 'hacker',
+                  num: nodes[c].wrong_list[w],
+                });
               } else if (w === 6) {
-                wrong_list.push({ trading: nodes[c].wrong_list[w] });
+                wrong_list.push({
+                  type: 'trading',
+                  num: nodes[c].wrong_list[w],
+                });
               } else if (w === 7) {
-                wrong_list.push({ pay: nodes[c].wrong_list[w] });
+                wrong_list.push({
+                  type: 'pay',
+                  num: nodes[c].wrong_list[w],
+                });
               } else if (w === 8) {
-                wrong_list.push({ other: nodes[c].wrong_list[w] });
+                wrong_list.push({
+                  type: 'other',
+                  num: nodes[c].wrong_list[w],
+                });
               }
             }
             wrong_sum += nodes[c].wrong_list[w];
