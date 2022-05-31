@@ -80,9 +80,10 @@ export default class Node extends Service {
     }
   }
 
-  public async recommand(node: string) {
+  public async recommand(id: string) {
     const driver = connectDB(this);
-    let sql = `match(n{id:${node}})-[*4]-(m) where n.community<>m.community return m`;
+    let sql = `match(n{id:"${id}"})-[*..4]-(m) where n.community<>m.community return m`;
+    console.log(sql);
     // let sql =  `match (n:${nodeType}) where n.`;
     // for(let i=0;i<condition.length;i++){
     //   let con = condition[i].split(":");
@@ -93,14 +94,14 @@ export default class Node extends Service {
     // }
     const session = driver.session();
     try {
-      let response: any = [];
+      // let response: any = [];
       const res = await session.run(sql);
-      response.push(res);
-      if (response.records.length !== 0) {
+      // response.push(res);
+      if (res.records.length !== 0) {
         console.log(res);
         const child_process = require('child_process');
         var workerProcess = child_process.exec(
-          'AHP.py' + response,
+          'AHP.py' + res,
           function (error, stdout, stderr) {
             if (error) {
               console.log(error.stack);
@@ -116,7 +117,7 @@ export default class Node extends Service {
         });
         return stdout;
       } else {
-        return null;
+        return "success";
       }
     } catch (error) {
       console.log(error);
