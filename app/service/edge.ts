@@ -2,7 +2,7 @@
 import { Service } from 'egg';
 import { connectDB, edgeClean, nodeClean } from '../utils';
 export default class EdgeService extends Service {
-  //查询相连节点的信息
+  // 查询相连节点的信息
   public async getEdgeByNode(sourceNode: string, targetNode: string) {
     const driver = connectDB(this);
     const sql = `match data=(n{id:'${sourceNode}'})-[r]-(m{id:'${targetNode}'}) return data`;
@@ -11,11 +11,11 @@ export default class EdgeService extends Service {
       const res = await session.run(sql);
       if (res.records.length !== 0) {
         const data = res.records[0]._fields[0];
-        const nodes = [nodeClean(data.start), nodeClean(data.end)];
+        const nodes = [ nodeClean(data.start), nodeClean(data.end) ];
         const links = edgeClean(data.segments[0].relationship);
         return {
-          nodes: nodes,
-          links: [links],
+          nodes,
+          links: [ links ],
         };
       }
       return null;
@@ -27,7 +27,7 @@ export default class EdgeService extends Service {
     }
   }
 
-  //查询某社区下的所有的边信息
+  // 查询某社区下的所有的边信息
   public async getEdgeByCommunity(communityId: number) {
     const driver = connectDB(this);
     const sql = `match (n)-[r]-(m) where n.community=${communityId} and m.community=${communityId} return r`;
@@ -64,8 +64,8 @@ export default class EdgeService extends Service {
     const session = driver.session();
     const result: any[] = [];
     try {
-      for (let c of communities) {
-        let children: {
+      for (const c of communities) {
+        const children: {
           name: string;
           children: { name: string; popularity: number; weight: number }[];
         }[] = [
@@ -130,8 +130,8 @@ export default class EdgeService extends Service {
             ],
           },
         ];
-        for (let r of rel) {
-          const sql = `match (n{community:${c}})-[r]->(m{community:${c}}) return count(r) as c`;
+        for (const r of rel) {
+          const sql = `match (n{community:${c}})-[r:${r}]->(m{community:${c}}) return count(r) as c`;
           const res = await session.run(sql);
           if (r === 'r_cert') {
             children[0].children[1].weight += res.records[0]._fields[0];
@@ -147,7 +147,7 @@ export default class EdgeService extends Service {
             children[0].children[0].weight += res.records[0]._fields[0];
           }
         }
-        result.push({ name: c, children: children });
+        result.push({ name: c, children });
       }
       return result;
     } catch (error) {
