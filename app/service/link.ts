@@ -5,13 +5,13 @@ export default class Network extends Service {
   public async getLinksBT2Nodes(node1: string, node2: string) {
     const driver = connectDB(this);
     const session = driver.session();
-    let keyNodeSQL1 = `match (n{id:"${node1}"}) with n, size((n)--()) as s return n, s`;
-    let keyNodeSQL2 = `match (n{id:"${node2}"}) with n, size((n)--()) as s return n, s`;
+    const keyNodeSQL1 = `match (n{id:"${node1}"}) with n, size((n)--()) as s return n, s`;
+    const keyNodeSQL2 = `match (n{id:"${node2}"}) with n, size((n)--()) as s return n, s`;
     let keyIPSQL1;
     let keyIPSQL2;
     let linkSQL;
     let flag = true;
-    let result: { nodes: any[]; links: any[] }[] = [];
+    const result: { nodes: any[]; links: any[] }[] = [];
     const isNodeKey = (res: any) => {
       let degree = res.records[0]._fields[1];
       if (res.records[0]._fields[0].properties.hasOwnProperty('asn')) {
@@ -58,8 +58,8 @@ export default class Network extends Service {
         const link2 = await session.run(linkSQL);
         linkSQL = `match p=(n{id:"${node1}"})-[*4]-(m{id:"${node2}"}) return p limit 30`;
         const link3 = await session.run(linkSQL);
-        for (let item of [...link1.records, ...link2.records, ...link3.records]) {
-          let resItem: { nodes: any[]; links: any[] } = {
+        for (const item of [ ...link1.records, ...link2.records, ...link3.records ]) {
+          const resItem: { nodes: any[]; links: any[] } = {
             nodes: [],
             links: [],
           };
