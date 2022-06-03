@@ -38,7 +38,7 @@ export default class NetworkController extends Controller {
     const params = ctx.request.body;
     const { nodes, links }: any =
       await ctx.service.network.getFilterNetworkByCommunities(
-        params.communities
+        params.communities,
       );
     ctx.body = {
       nodes,
@@ -58,7 +58,7 @@ export default class NetworkController extends Controller {
         const node = await ctx.service.node.getNodeById(params.node[0]);
         ctx.body = {
           data: {
-            nodes: [node],
+            nodes: [ node ],
             links: [],
           },
           type: params.type,
@@ -67,18 +67,18 @@ export default class NetworkController extends Controller {
       case 'link':
         const data = await ctx.service.edge.getEdgeByNode(
           params.node[0],
-          params.node[1]
+          params.node[1],
         );
-        ctx.body = { data: data, type: params.type };
+        ctx.body = { data, type: params.type };
         break;
       case 'condition':
         const nodeCondition = await ctx.service.node.getNodeByCondition(
           params.node[0],
-          params.node.slice(1)
+          params.node.slice(1),
         );
         ctx.body = {
           data: {
-            nodes: [nodeCondition],
+            nodes: [ nodeCondition ],
             links: [],
           },
           type: params.type,
@@ -88,6 +88,8 @@ export default class NetworkController extends Controller {
         const communities =
           await ctx.service.network.getFilterNetworkByCommunities(params.node);
         ctx.body = { data: communities, type: params.type };
+        break;
+      default:
         break;
     }
     ctx.type = 'json';
@@ -113,6 +115,17 @@ export default class NetworkController extends Controller {
       params = params.communities;
     }
     const res = await ctx.service.network.getCurrNeighbours(params);
+    ctx.body = res;
+    ctx.type = 'json';
+  }
+
+  public async getCurrRects() {
+    const { ctx } = this;
+    let params = ctx.request.body;
+    if (params.constructor === Object) {
+      params = params.communities;
+    }
+    const res = await ctx.service.network.getCurrRects(params);
     ctx.body = res;
     ctx.type = 'json';
   }
