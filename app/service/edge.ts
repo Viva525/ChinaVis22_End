@@ -5,7 +5,7 @@ export default class EdgeService extends Service {
   // 查询相连节点的信息
   public async getEdgeByNode(sourceNode: string, targetNode: string) {
     const driver = connectDB(this);
-    const sql = `match data=(n{id:'${sourceNode}'})-[r]-(m{id:'${targetNode}'}) return data`;
+    const sql = `match data=(n{id:'${sourceNode}'})-[r:*]-(m{id:'${targetNode}'}) return data`;
     const session = driver.session();
     try {
       const res = await session.run(sql);
