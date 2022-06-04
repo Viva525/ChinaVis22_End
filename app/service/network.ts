@@ -102,6 +102,11 @@ export default class Network extends Service {
           }
         }
       }
+      for (const c of communities) {
+        if (cSet.has(c)) {
+          cSet.delete(c);
+        }
+      }
       const res: {
         id: number;
         wrong_sum: number;
