@@ -78,7 +78,7 @@ export default class NetworkController extends Controller {
         );
         ctx.body = {
           data: {
-            nodes: [ nodeCondition ],
+            nodes: nodeCondition,
             links: [],
           },
           type: params.type,
