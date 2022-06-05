@@ -67,7 +67,10 @@ export default class Node extends Service {
     try {
       const res = await session.run(sql);
       if (res.records.length !== 0) {
-        const node = nodeClean(res.records[0]._fields[0]);
+        const node:any[] = [];
+        for (const n of res.records) {
+          node.push(nodeClean(n._fields[0]));
+        }
         return node;
       }
       return null;
