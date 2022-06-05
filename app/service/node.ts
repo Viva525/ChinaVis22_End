@@ -18,7 +18,6 @@ export default class Node extends Service {
         return node;
       }
       return null;
-
     } catch (error) {
       console.log(error);
     } finally {
@@ -42,7 +41,6 @@ export default class Node extends Service {
         return nodes;
       }
       return null;
-
     } catch (error) {
       console.log(error);
     } finally {
@@ -67,14 +65,13 @@ export default class Node extends Service {
     try {
       const res = await session.run(sql);
       if (res.records.length !== 0) {
-        const node:any[] = [];
+        const node: any[] = [];
         for (const n of res.records) {
           node.push(nodeClean(n._fields[0]));
         }
         return node;
       }
       return null;
-
     } catch (error) {
       console.log(error);
     } finally {
@@ -91,22 +88,24 @@ export default class Node extends Service {
     const session = driver.session();
     try {
       const res = await session.run(sql);
-      const arr = new Set();//节点
-      let arr1:number[]= []
-      const step =new Set();
-      let step1:number[]= []
-      for (let i = 0; i < res["records"].length; ++i) {
-        arr.add(res["records"][i]["_fields"]["0"]["end"]["properties"]["community"]);
-        step.add(res["records"][i]["_fields"]["0"]["length"]);
-        arr1.push(res["records"][i]["_fields"]["0"]["end"]["properties"]["community"]);
-        step1.push(res["records"][i]["_fields"]["0"]["length"])
+      const arr = new Set(); // 节点
+      const arr1: number[] = [];
+      const step = new Set();
+      const step1: number[] = [];
+      for (let i = 0; i < res.records.length; ++i) {
+        arr.add(res.records[i]._fields['0'].end.properties.community);
+        step.add(res.records[i]._fields['0'].length);
+        arr1.push(res.records[i]._fields['0'].end.properties.community);
+        step1.push(res.records[i]._fields['0'].length);
       }
       console.log(step);
-      const nodes = JSON.parse(readFileSync('./app/public/community_node.json', 'utf-8'));
+      const nodes = JSON.parse(
+        readFileSync('./app/public/community_node.json', 'utf-8'),
+      );
 
       const response: {
         id: number;
-        step:number;
+        step: number;
         wrong_sum: number;
         wrong_list: {
           type: string;
@@ -116,8 +115,8 @@ export default class Node extends Service {
       for (let c = 0; c < nodes.length; ++c) {
         if (arr.has(nodes[c].id)) {
           let wrong_sum = 0;
-          let index = arr1.indexOf(nodes[c].id)
-          const step2:number = step1[index]
+          const index = arr1.indexOf(nodes[c].id);
+          const step2: number = step1[index];
           const wrong_list: {
             type: string;
             num: number;
@@ -241,7 +240,6 @@ export default class Node extends Service {
       //   })
       // }
       // return 'success';
-
     } catch (error) {
       console.log(error);
     } finally {
@@ -270,7 +268,7 @@ export default class Node extends Service {
       const industry_res: any[] = [];
       for (const c of communities) {
         const li: number[] = [];
-        for (const i of ['Domain', 'Cert', 'IP']) {
+        for (const i of [ 'Domain', 'Cert', 'IP' ]) {
           const sql = `match (n:${i}{community:${c}}) return count(n) as c_n`;
           const res = await session.run(sql);
           li.push(res.records[0]._fields[0]);
@@ -292,12 +290,25 @@ export default class Node extends Service {
           other: 0,
         };
         res.records
-          .map((d: any) => {
-            return nodeClean(d._fields[0]);
-          })
           .forEach((element: any) => {
-            if (element.properties.porn) {
+            if (element._fields[0].properties.porn === 'True') {
               industry.porn += 1;
+            } else if (element._fields[0].properties.gambling === 'True') {
+              industry.gambling += 1;
+            } else if (element._fields[0].properties.fraud === 'True') {
+              industry.fraud += 1;
+            } else if (element._fields[0].properties.drug === 'True') {
+              industry.drug += 1;
+            } else if (element._fields[0].properties.gun === 'True') {
+              industry.gun += 1;
+            } else if (element._fields[0].properties.hacker === 'True') {
+              industry.hacker += 1;
+            } else if (element._fields[0].properties.trading === 'True') {
+              industry.trading += 1;
+            } else if (element._fields[0].properties.pay === 'True') {
+              industry.pay += 1;
+            } else if (element._fields[0].properties.other === 'True') {
+              industry.other += 1;
             }
           });
         industry_res.push(industry);
@@ -307,5 +318,4 @@ export default class Node extends Service {
       console.log(error);
     }
   }
-
 }
