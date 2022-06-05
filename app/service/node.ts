@@ -80,25 +80,40 @@ export default class Node extends Service {
     }
   }
 
-  public async recommand(id: string) {
+  public async recommand(id: string, communities:number[]) {
     const driver = connectDB(this);
-    const sql = `match data=(n{id:"${id}"})-[*..4]-(m) where n.community<>m.community return distinct data`;
-    // const sql = `match (n{id:"${id}"})-[*..4]-(m) where n.community<>m.community return distinct m.community`;
-    console.log(sql);
+    const sql: string[] = [];
+    for (let i = 1; i <= 4; i++) {
+      sql.push(
+        `match data=(n{id:"${id}"})-[*${i}]-(m) where n.community<>m.community return distinct m.community`,
+      );
+    }
+
     const session = driver.session();
     try {
-      const res = await session.run(sql);
-      const arr = new Set(); // 节点
-      const arr1: number[] = [];
-      const step = new Set();
-      const step1: number[] = [];
-      for (let i = 0; i < res.records.length; ++i) {
-        arr.add(res.records[i]._fields['0'].end.properties.community);
-        step.add(res.records[i]._fields['0'].length);
-        arr1.push(res.records[i]._fields['0'].end.properties.community);
-        step1.push(res.records[i]._fields['0'].length);
+      const resCommunity: number[][] = [];
+      const resSet = new Set(communities);
+      for (const s of sql) {
+        const res = await session.run(s);
+
+        if (res.records.length !== 0) {
+          const list = res.records.map((item: any) => {
+            return item._fields[0];
+          });
+          for (let li = 0; li < list.length; li++) {
+            if (resSet.has(list[li])) {
+              list.splice(list.indexOf(li), 1);
+              li--;
+            } else {
+              resSet.add(list[li]);
+            }
+          }
+          resCommunity.push(list);
+        } else {
+          resCommunity.push([]);
+        }
       }
-      console.log(step);
+      console.log('查询完毕');
       const nodes = JSON.parse(
         readFileSync('./app/public/community_node.json', 'utf-8'),
       );
@@ -112,134 +127,76 @@ export default class Node extends Service {
           num: number;
         }[];
       }[] = [];
+
       for (let c = 0; c < nodes.length; ++c) {
-        if (arr.has(nodes[c].id)) {
-          let wrong_sum = 0;
-          const index = arr1.indexOf(nodes[c].id);
-          const step2: number = step1[index];
-          const wrong_list: {
-            type: string;
-            num: number;
-          }[] = [];
-          for (let w = 0; w < nodes[c].wrong_list.length; w++) {
-            if (nodes[c].wrong_list[w] > 0) {
-              if (w === 0) {
-                wrong_list.push({
-                  type: 'porn',
-                  num: nodes[c].wrong_list[w],
-                });
-              } else if (w === 1) {
-                wrong_list.push({
-                  type: 'gambling',
-                  num: nodes[c].wrong_list[w],
-                });
-              } else if (w === 2) {
-                wrong_list.push({
-                  type: 'fraud',
-                  num: nodes[c].wrong_list[w],
-                });
-              } else if (w === 3) {
-                wrong_list.push({
-                  type: 'drug',
-                  num: nodes[c].wrong_list[w],
-                });
-              } else if (w === 4) {
-                wrong_list.push({
-                  type: 'gun',
-                  num: nodes[c].wrong_list[w],
-                });
-              } else if (w === 5) {
-                wrong_list.push({
-                  type: 'hacker',
-                  num: nodes[c].wrong_list[w],
-                });
-              } else if (w === 6) {
-                wrong_list.push({
-                  type: 'trading',
-                  num: nodes[c].wrong_list[w],
-                });
-              } else if (w === 7) {
-                wrong_list.push({
-                  type: 'pay',
-                  num: nodes[c].wrong_list[w],
-                });
-              } else if (w === 8) {
-                wrong_list.push({
-                  type: 'other',
-                  num: nodes[c].wrong_list[w],
-                });
+        for (let i = 0; i < 4; i++) {
+          if (resCommunity[i].includes(nodes[c].id)) {
+            let wrong_sum = 0;
+            const wrong_list: {
+              type: string;
+              num: number;
+            }[] = [];
+            for (let w = 0; w < nodes[c].wrong_list.length; w++) {
+              if (nodes[c].wrong_list[w] > 0) {
+                if (w === 0) {
+                  wrong_list.push({
+                    type: 'porn',
+                    num: nodes[c].wrong_list[w],
+                  });
+                } else if (w === 1) {
+                  wrong_list.push({
+                    type: 'gambling',
+                    num: nodes[c].wrong_list[w],
+                  });
+                } else if (w === 2) {
+                  wrong_list.push({
+                    type: 'fraud',
+                    num: nodes[c].wrong_list[w],
+                  });
+                } else if (w === 3) {
+                  wrong_list.push({
+                    type: 'drug',
+                    num: nodes[c].wrong_list[w],
+                  });
+                } else if (w === 4) {
+                  wrong_list.push({
+                    type: 'gun',
+                    num: nodes[c].wrong_list[w],
+                  });
+                } else if (w === 5) {
+                  wrong_list.push({
+                    type: 'hacker',
+                    num: nodes[c].wrong_list[w],
+                  });
+                } else if (w === 6) {
+                  wrong_list.push({
+                    type: 'trading',
+                    num: nodes[c].wrong_list[w],
+                  });
+                } else if (w === 7) {
+                  wrong_list.push({
+                    type: 'pay',
+                    num: nodes[c].wrong_list[w],
+                  });
+                } else if (w === 8) {
+                  wrong_list.push({
+                    type: 'other',
+                    num: nodes[c].wrong_list[w],
+                  });
+                }
               }
+              wrong_sum += nodes[c].wrong_list[w];
             }
-            wrong_sum += nodes[c].wrong_list[w];
+            response.push({
+              id: nodes[c].id,
+              step: i + 1,
+              wrong_sum,
+              wrong_list,
+            });
           }
-          const rect = {
-            id: nodes[c].id,
-            step: step2,
-            wrong_sum,
-            wrong_list,
-          };
-          response.push(rect);
         }
       }
-      // console.log(response);
       return response;
-      // var arr: number[] = [];
-      // for (let j = 0; j < res["records"].length; ++j) {
-      //   console.log(res["records"][j]);
-      //   // console.log(res["records"][0]["_fields"][0]["length"]);//输出节点跳数
-      //   let leng = res["records"][j]["_fields"][0]["length"];
-      //   console.log(leng)
-      //   // console.log(res["records"][0]["_fields"][0]["segments"]);//得到跳的所有中间节点数,求平均值
-      //   // console.log(res["records"][0]["_fields"][0]["segments"][0]["relationship"]["type"]);
-      //   // console.log(res["records"][0]["_fields"][0]["segments"][leng - 1]["end"]["labels"][0]);
-      //   //转换函数
-      //   function transfer(str) {
-      //     if (str == "r_cert" || str == "r_subdomain" || str == "r_request_jump" || str == "r_dns_a")
-      //       return 9;
-      //     else if (str == "IP" || str == "r_whois_name" || str == "r_whois_email")
-      //       return 6;
-      //     else if (str == "r_cert_chain" || str == "r_cname")
-      //       return 3
-      //     else
-      //       return 1
-      //   }
-      //   function transfer1(str) {
-      //     if ( str == "IP" || str == "Cert")
-      //       return 9
-      //     else if (str == "Domain")
-      //       return 5
-      //     else if (str == "Whois_Name" || str == "Whois_Phone" || str == "Whois_Email")
-      //       return 3
-      //     else
-      //       return 1
-      //   }
-      //   let temp = 0;
-      //   let Node = transfer1(res["records"][j]["_fields"][0]["segments"][leng - 1]["end"]["labels"][0]);
-      //   for (let i = 0; i < leng; ++i)//求取节点关联的平均值
-      //   {
-      //     console.log(res["records"][j]["_fields"][0]["segments"][i]["start"]["properties"]["community"]);
-      //     temp += transfer(res["records"][j]["_fields"][0]["segments"][i]["relationship"]["type"]);
-      //   }
-      //   temp = temp / leng;
-      //   // console.log(temp);
-      //   // let arr1 = [leng, temp, Node];
-      //   arr.push(leng);
-      //   arr.push(temp);
-      //   arr.push(Node);
-      // }
-      // console.log(arr);
-      // if (res.records.length !== 0) {
-      //   const exec = require('child_process').exec;
-      //   // const execSync = require('child_process').execSync;
-      //   // 异步执行
-      //   exec('python F:\\homework\\chinasvis22\\ChinaVis22_End\\app\\service\\AHP.py --B ' + arr.toString(), function (error: any, stdout: string, stderr: string) {
-      //     if (error) {
-      //       console.info('stderr : ' + stderr);
-      //     }
-      //     console.log('exec: ' + stdout);
-      //   })
-      // }
-      // return 'success';
     } catch (error) {
       console.log(error);
     } finally {
@@ -289,28 +246,27 @@ export default class Node extends Service {
           pay: 0,
           other: 0,
         };
-        res.records
-          .forEach((element: any) => {
-            if (element._fields[0].properties.porn === 'True') {
-              industry.porn += 1;
-            } else if (element._fields[0].properties.gambling === 'True') {
-              industry.gambling += 1;
-            } else if (element._fields[0].properties.fraud === 'True') {
-              industry.fraud += 1;
-            } else if (element._fields[0].properties.drug === 'True') {
-              industry.drug += 1;
-            } else if (element._fields[0].properties.gun === 'True') {
-              industry.gun += 1;
-            } else if (element._fields[0].properties.hacker === 'True') {
-              industry.hacker += 1;
-            } else if (element._fields[0].properties.trading === 'True') {
-              industry.trading += 1;
-            } else if (element._fields[0].properties.pay === 'True') {
-              industry.pay += 1;
-            } else if (element._fields[0].properties.other === 'True') {
-              industry.other += 1;
-            }
-          });
+        res.records.forEach((element: any) => {
+          if (element._fields[0].properties.porn === 'True') {
+            industry.porn += 1;
+          } else if (element._fields[0].properties.gambling === 'True') {
+            industry.gambling += 1;
+          } else if (element._fields[0].properties.fraud === 'True') {
+            industry.fraud += 1;
+          } else if (element._fields[0].properties.drug === 'True') {
+            industry.drug += 1;
+          } else if (element._fields[0].properties.gun === 'True') {
+            industry.gun += 1;
+          } else if (element._fields[0].properties.hacker === 'True') {
+            industry.hacker += 1;
+          } else if (element._fields[0].properties.trading === 'True') {
+            industry.trading += 1;
+          } else if (element._fields[0].properties.pay === 'True') {
+            industry.pay += 1;
+          } else if (element._fields[0].properties.other === 'True') {
+            industry.other += 1;
+          }
+        });
         industry_res.push(industry);
       }
       return { count_res, industry_res };
