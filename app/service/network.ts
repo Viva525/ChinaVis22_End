@@ -109,6 +109,7 @@ export default class Network extends Service {
       }
       const res: {
         id: number;
+        node_num: number;
         wrong_sum: number;
         wrong_list: {
           type: string;
@@ -175,6 +176,7 @@ export default class Network extends Service {
           }
           const rect = {
             id: nodes[c].id,
+            node_num: nodes[c].node_num,
             wrong_sum,
             wrong_list,
           };

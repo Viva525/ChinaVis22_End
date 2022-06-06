@@ -105,6 +105,7 @@ export default class Node extends Service {
 
       const response: {
         id: number;
+        node_num: number;
         step: number;
         wrong_sum: number;
         wrong_list: {
@@ -174,6 +175,7 @@ export default class Node extends Service {
           }
           const rect = {
             id: nodes[c].id,
+            node_num: nodes[c].node_num,
             step: step2,
             wrong_sum,
             wrong_list,
