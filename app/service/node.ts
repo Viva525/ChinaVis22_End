@@ -80,7 +80,7 @@ export default class Node extends Service {
     }
   }
 
-  public async recommand(id: string) {
+  public async recommand(id: string, communities: number[]) {
     const driver = connectDB(this);
     const sql = `match data=(n{id:"${id}"})-[*..4]-(m) where n.community<>m.community return distinct data`;
     // const sql = `match (n{id:"${id}"})-[*..4]-(m) where n.community<>m.community return distinct m.community`;
@@ -88,7 +88,7 @@ export default class Node extends Service {
     const session = driver.session();
     try {
       const res = await session.run(sql);
-      const arr = new Set(); // 节点
+      const arr = new Set(communities); // 节点
       const arr1: number[] = [];
       const step = new Set();
       const step1: number[] = [];
