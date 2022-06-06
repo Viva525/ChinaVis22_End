@@ -102,7 +102,7 @@ export default class Node extends Service {
       const nodes = JSON.parse(
         readFileSync('./app/public/community_node.json', 'utf-8'),
       );
-
+      console.log("查询完毕");
       const response: {
         id: number;
         node_num: number;
@@ -183,6 +183,7 @@ export default class Node extends Service {
           response.push(rect);
         }
       }
+      console.log("处理完毕");
       // console.log(response);
       return response;
       // var arr: number[] = [];
