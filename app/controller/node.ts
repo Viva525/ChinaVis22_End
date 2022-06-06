@@ -17,8 +17,8 @@ export default class NodeController extends Controller {
    */
   public async recommand() {
     const { ctx } = this;
-    const { id } = ctx.request.body;
-    const res = await ctx.service.node.recommand(id);
+    const { id, communities } = ctx.request.body;
+    const res = await ctx.service.node.recommand(id, communities);
     ctx.body = res;
     ctx.type = 'json';
   }
