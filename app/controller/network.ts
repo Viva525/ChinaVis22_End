@@ -36,7 +36,10 @@ export default class NetworkController extends Controller {
   public async getFilterNetworkByCommunities() {
     const { ctx } = this;
     const params = ctx.request.body;
-    const { nodes, links }: any =
+    console.log(params);
+
+    if(params.communities.length !== 0){
+      const { nodes, links }: any =
       await ctx.service.network.getFilterNetworkByCommunities(
         params.communities,
       );
@@ -44,6 +47,13 @@ export default class NetworkController extends Controller {
       nodes,
       links,
     };
+    }else{
+      ctx.body = {
+        nodes: [],
+        links: []
+      }
+    }
+    
     ctx.type = 'json';
   }
   /**
