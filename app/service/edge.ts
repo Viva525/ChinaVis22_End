@@ -11,8 +11,8 @@ export default class EdgeService extends Service {
       const res = await session.run(sql);
       if (res.records.length !== 0) {
         const data = res.records[0]._fields[0];
-        const nodes:any[] = [ nodeClean(data.start) ];
-        const links:any[] = [];
+        const nodes: any[] = [nodeClean(data.start)];
+        const links: any[] = [];
         for (const seg of data.segments) {
           nodes.push(nodeClean(seg.end));
           links.push(edgeClean(seg.relationship));
@@ -68,90 +68,90 @@ export default class EdgeService extends Service {
     const session = driver.session();
     const result: any[] = [];
     try {
+      const count_res: any[] = [];
       for (const c of communities) {
+        const li: number[] = [];
+        for (const i of ['Domain', 'Cert', 'IP']) {
+          const sql = `match (n:${i}{community:${c}}) return count(n) as c_n`;
+          const res = await session.run(sql);
+          li.push(res.records[0]._fields[0]);
+        }
+        count_res.push(li);
+
         const children: {
           name: string;
-          children: { name: string; popularity: number; weight: number }[];
+          value: number;
+          children: { name: string; value: number }[];
         }[] = [
-          {
-            name: 'Domain',
-            children: [
-              {
-                name: 'Domain',
-                popularity: 500,
-                weight: 0,
-              },
-              {
-                name: 'Cert',
-                popularity: 500,
-                weight: 0,
-              },
-              {
-                name: 'IP',
-                popularity: 500,
-                weight: 0,
-              },
-            ],
-          },
-          {
-            name: 'Cert',
-            children: [
-              {
-                name: 'Domain',
-                popularity: 500,
-                weight: 0,
-              },
-              {
-                name: 'Cert',
-                popularity: 500,
-                weight: 0,
-              },
-              {
-                name: 'IP',
-                popularity: 500,
-                weight: 0,
-              },
-            ],
-          },
-          {
-            name: 'IP',
-            children: [
-              {
-                name: 'Domain',
-                popularity: 500,
-                weight: 0,
-              },
-              {
-                name: 'Cert',
-                popularity: 500,
-                weight: 0,
-              },
-              {
-                name: 'IP',
-                popularity: 500,
-                weight: 0,
-              },
-            ],
-          },
-        ];
+            {
+              name: 'Domain',
+              value: count_res[0][0],
+              children: [
+                {
+                  name: 'Domain',
+                  value: 0,
+                },
+                {
+                  name: 'Cert',
+                  value: 0,
+                },
+                {
+                  name: 'IP',
+                  value: 0,
+                },
+              ],
+            },
+            {
+              name: 'Cert',
+              value: count_res[0][1],
+              children: [
+                {
+                  name: 'Cert',
+                  value: 0,
+                },
+              ],
+            },
+            {
+              name: 'IP',
+              value: count_res[0][2],
+              children: [],
+            },
+          ];
         for (const r of rel) {
           const sql = `match (n{community:${c}})-[r:${r}]->(m{community:${c}}) return count(r) as c`;
           const res = await session.run(sql);
           if (r === 'r_cert') {
-            children[0].children[1].weight += res.records[0]._fields[0];
+            children[0].children[1].value += res.records[0]._fields[0];
           } else if (r === 'r_cname') {
-            children[0].children[0].weight += res.records[0]._fields[0];
+            children[0].children[0].value += res.records[0]._fields[0];
           } else if (r === 'r_dns_a') {
-            children[0].children[2].weight += res.records[0]._fields[0];
+            children[0].children[2].value += res.records[0]._fields[0];
           } else if (r === 'r_subdomain') {
-            children[0].children[0].weight += res.records[0]._fields[0];
+            children[0].children[0].value += res.records[0]._fields[0];
           } else if (r === 'r_cert_chain') {
-            children[1].children[1].weight += res.records[0]._fields[0];
+            children[1].children[0].value += res.records[0]._fields[0];
           } else if (r === 'r_request_jump') {
-            children[0].children[0].weight += res.records[0]._fields[0];
+            children[0].children[0].value += res.records[0]._fields[0];
           }
         }
-        result.push({ name: c, children });
+
+        const childD: any[] = []
+        const childC: any[] = []
+        const childrenEnd: any[] = []
+        childD.push(children[0].children.filter((item: any) => {
+          return item.value > 0
+        }))
+        childC.push(children[1].children.filter((item: any) => {
+          return item.value > 0
+        }))
+        children[0].children = childD
+        children[1].children = childC
+
+        childrenEnd.push(children.filter((item: any) => {
+          return item.value > 0
+        }))
+
+        result.push({ name: c, childrenEnd });
       }
       return result;
     } catch (error) {

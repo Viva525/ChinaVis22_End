@@ -271,7 +271,7 @@ export default class Node extends Service {
       const industry_res: any[] = [];
       for (const c of communities) {
         const li: number[] = [];
-        for (const i of [ 'Domain', 'Cert', 'IP' ]) {
+        for (const i of ['Domain', 'Cert', 'IP']) {
           const sql = `match (n:${i}{community:${c}}) return count(n) as c_n`;
           const res = await session.run(sql);
           li.push(res.records[0]._fields[0]);
@@ -314,7 +314,23 @@ export default class Node extends Service {
               industry.other += 1;
             }
           });
-        industry_res.push(industry);
+        const industryEnd: any[] = [];
+        var typeCrim = Object.getOwnPropertyNames((industry as any));
+        var num = 0;
+        var totalNum = 0;
+        for (let key in industry) {
+          let v = industry[key]
+          if (v !== 0) {
+            const temp = {
+              'name': typeCrim[num],
+              'value': v
+            }
+            industryEnd.push(temp);
+          }
+          num++;
+          totalNum += v;
+        }
+        industry_res.push({ value: totalNum, children: industryEnd });
       }
       return { count_res, industry_res };
     } catch (error) {
