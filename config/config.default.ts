@@ -4,8 +4,8 @@ export default (appInfo: EggAppInfo) => {
   const config = {
     neo4j: {
       url: 'bolt://localhost',
-      username: 'neo4j',
-      password: 'chinavis',
+      username: 'Graph',
+      password: '123',
     },
     security: {
       // 关闭 csrf
